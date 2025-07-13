@@ -15,16 +15,15 @@ def format_time(t):
     return f'{t.hour:02d}:{t.minute:02d}:{t.second:02d}'
 
 def sum_times(t1, t2):
-    """Add two time objects and return the sum."""
+    '''Add two time objects and return the sum.'''
     sum = Time(0,0,0)
     sum.hour = t1.hour + t2.hour
     sum.minute = t1.minute + t2.minute
     sum.second = t1.second + t2.second
 
-
-    """These find the quotient and remainder from minute/second values that are 
+    '''These find the quotient and remainder from minute/second values that are 
     60 or over. The quotient returned from divmod are added to the respective hour/minute
-    sum and the remainder is set as their respective minute/second sum."""
+    sum and the remainder is set as their respective minute/second sum.'''
     
     if sum.second >= 60:
         add_minute, second = divmod(sum.second, 60)
@@ -37,6 +36,39 @@ def sum_times(t1, t2):
         sum.minute = minute
 
     return sum
+
+def change_time(time, seconds):
+    time.second += seconds
+    if valid_time(time) != True:
+        while time.second >= 60:
+            time.second -= 60
+            time.minute +=1
+        while time.minute >= 60:
+            time.minute -= 60
+            time.hour += 1
+
+        while time.second < 0: # borrow a minute when seconds < 0
+            time.second += 60 
+            time.minute -= 1 
+            
+        while time.minute < 0: # borrow an hour when minutes < 0
+            time.minute += 60
+            time.hour -= 1
+
+    return None
+
+def time_to_sec(time):
+    '''convert a time object to a single integer representing the number of seconds from mid-night'''
+    minutes = time.hour * 60 + time.minute
+    seconds = minutes * 60 + time.second
+    return seconds
+
+def sec_to_time(seconds):   
+    '''convert a given number of seconds to a time object in hour,minute,second format'''
+    time = Time(0,0,0)
+    minutes, time.second = divmod(seconds,60)
+    time.hour, time.minute = divmod(minutes,60)
+    return time
 
 def valid_time(t):
     """check for the validity of the time object attributes:
